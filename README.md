@@ -45,3 +45,30 @@ This project implements an AI-powered image forensics system that detects tamper
     Confusion Matrix: confusion_matrix.png
     ROC Curve: roc_curve.png
     Grad-CAM Outputs: gradcam_outputs/
+## Outputs Two: Mobile App Integration 
+
+I am developing a **mobile application** that makes image tampering testing quick and accessible. The app uses the trained model from this project to provide on-the-go forensic analysis.
+### App Features
+- 📸 **Camera Integration:** Capture or upload images directly from your phone
+- 🔍 **Real-time Analysis:** Instant tampering detection using the trained MobileNetV2 model
+- 🔐 **Cryptographic Verification:** SHA-256 hash verification for chain of custody
+### App Results
+The `app/` folder contains sample results from the mobile app testing:
+
+| File | Description |
+|------|-------------|
+| `app/screenshots/` | UI screenshots showing the app in action |
+| `app/test_results/` | Sample images with their detection results |
+
+#### 📱 User Interface
+The app provides a simple, intuitive interface for forensic analysis:
+- Home screen with upload/photo options
+- Results screen showing tampering probability
+
+#### 📊 Example Results
+| Image Type | Detection Result | Confidence | Hash Status |
+|------------|-----------------|------------|-------------|
+| Authentic | ✅ PASS | 89.2% | INTACT ✅ |
+| Tampered | ❌ FAIL | 92.4% | INTACT ✅ |
+| Authentic | ✅ PASS | 87.6% | INTACT ✅ |
+| Tampered | ❌ FAIL | 94.1% | INTACT ✅ |
