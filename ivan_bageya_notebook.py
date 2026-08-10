@@ -13,7 +13,7 @@ Original file is located at
 
 !pip install pillow tqdm scikit-learn seaborn matplotlib kagglehub opencv-python-headless
 
-print("✅ Dependencies installed")
+print("Dependencies installed")
 
 # Standard libraries
 import os
@@ -58,19 +58,19 @@ random.seed(42)
 np.random.seed(42)
 torch.manual_seed(42)
 
-print("✅ All libraries imported")
+print("All libraries imported")
 print(f"PyTorch version: {torch.__version__}")
 print(f"CUDA available: {torch.cuda.is_available()}")
 
-print("📥 Downloading CASIA 2.0 dataset...")
+print("Downloading CASIA 2.0 dataset...")
 
 try:
     path = kagglehub.dataset_download(
         "divg07/casia-20-image-tampering-detection-dataset"
     )
-    print(f"✅ Dataset downloaded to: {path}")
+    print(f" Dataset downloaded to: {path}")
 except Exception as e:
-    print(f"⚠️ Download error: {e}")
+    print(f" Download error: {e}")
     print("Please ensure you have kagglehub installed and internet connection")
 
 # Set paths
@@ -117,7 +117,7 @@ def split_and_copy(src_dir, label, split_ratios=(0.7, 0.15, 0.15)):
 
     return {k: len(v) for k, v in splits.items()}
 
-print("📊 Splitting dataset...")
+print("Splitting dataset...")
 
 # Split original images
 orig_counts = split_and_copy(SRC_AU, "original")
@@ -129,7 +129,7 @@ tampered_counts = split_and_copy(SRC_TP, "tampered")
 print(f"Tampered images - Train: {tampered_counts['train']}, "
       f"Val: {tampered_counts['val']}, Test: {tampered_counts['test']}")
 
-print("\n✅ Dataset split complete")
+print("\n Dataset split complete")
 print(f"Total images: {sum(orig_counts.values()) + sum(tampered_counts.values())}")
 
 # ============================================
@@ -150,9 +150,9 @@ class CryptographicVerifier:
         try:
             with open(log_file, 'r') as f:
                 self.chain_of_custody = json.load(f)
-            print(f"📂 Loaded {len(self.chain_of_custody)} chain-of-custody records")
+            print(f" Loaded {len(self.chain_of_custody)} chain-of-custody records")
         except (FileNotFoundError, json.JSONDecodeError):
-            print("📂 Creating new chain-of-custody log")
+            print(" Creating new chain-of-custody log")
 
     def generate_hash(self, file_path):
         """
@@ -167,7 +167,7 @@ class CryptographicVerifier:
                     sha256_hash.update(byte_block)
             return sha256_hash.hexdigest()
         except Exception as e:
-            print(f"⚠️ Error hashing {file_path}: {e}")
+            print(f" Error hashing {file_path}: {e}")
             return None
 
     def record_event(self, image_path, action, actor, metadata=None):
@@ -201,7 +201,7 @@ class CryptographicVerifier:
             with open(self.log_file, 'w') as f:
                 json.dump(self.chain_of_custody, f, indent=2)
         except Exception as e:
-            print(f"⚠️ Error saving log: {e}")
+            print(f" Error saving log: {e}")
 
     def verify_integrity(self, image_path):
         """
@@ -235,7 +235,7 @@ class CryptographicVerifier:
 
         return {
             "valid": is_valid,
-            "status": "INTACT ✅" if is_valid else "TAMPERED ❌",
+            "status": "INTACT" if is_valid else "TAMPERED",
             "stored_hash": stored_entry["hash"],
             "current_hash": current_hash,
             "recorded_at": stored_entry["timestamp"]
@@ -254,7 +254,7 @@ class CryptographicVerifier:
         """
         df = pd.DataFrame(self.chain_of_custody)
         df.to_csv(output_file, index=False)
-        print(f"📊 Audit report exported to {output_file}")
+        print(f"Audit report exported to {output_file}")
         return df
 
     def record_batch(self, image_paths, action, actor, metadata=None):
@@ -268,12 +268,12 @@ class CryptographicVerifier:
                 results.append(result)
         return results
 
-print("🔐 CryptographicVerifier class defined")
+print("CryptographicVerifier class defined")
 
 # Initialize verifier
 verifier = CryptographicVerifier("chain_of_custody.json")
 
-print("\n📋 Recording chain of custody for all images...")
+print("\n Recording chain of custody for all images...")
 
 # Record all images in the dataset
 all_images = []
@@ -283,7 +283,7 @@ for split in ["train", "val", "test"]:
         for img in img_dir.glob("*"):
             all_images.append(img)
 
-print(f"📸 Found {len(all_images)} images to record")
+print(f"Found {len(all_images)} images to record")
 
 # Record in batches (first 100 for quick test)
 test_images = all_images[:100]
@@ -294,7 +294,7 @@ verifier.record_batch(
     metadata={"dataset": "CASIA2", "split": "initial_ingest"}
 )
 
-print(f"✅ Recorded {len(verifier.chain_of_custody)} chain-of-custody entries")
+print(f" Recorded {len(verifier.chain_of_custody)} chain-of-custody entries")
 
 Image.MAX_IMAGE_PIXELS = None
 ImageFile.LOAD_TRUNCATED_IMAGES = True
@@ -334,9 +334,9 @@ def precompute_ela():
                 except Exception as e:
                     continue
 
-print("🔄 Generating ELA images...")
+print("Generating ELA images...")
 precompute_ela()
-print("✅ ELA precomputation complete")
+print("ELA precomputation complete")
 
 # ============================================
 # STEP 7: DATASET LOADER WITH CRYPTOGRAPHIC VERIFICATION
@@ -364,7 +364,7 @@ class SecureELADataset(Dataset):
                                std=[0.229, 0.224, 0.225])
         ])
 
-        print(f"📊 Loaded {len(self.samples)} images from {root}")
+        print(f" Loaded {len(self.samples)} images from {root}")
 
     def __len__(self):
         return len(self.samples)
@@ -375,8 +375,8 @@ class SecureELADataset(Dataset):
         # Optional integrity verification
         if self.verifier and self.verify_hashes:
             verification = self.verifier.verify_integrity(img_path)
-            if verification["status"] == "TAMPERED ❌":
-                print(f"⚠️ Integrity warning: {img_path.name} may be tampered!")
+            if verification["status"] == "TAMPERED ":
+                print(f"Integrity warning: {img_path.name} may be tampered!")
 
         # Load image
         img = Image.open(img_path).convert("RGB")
@@ -405,7 +405,7 @@ train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
 test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 
-print(f"\n✅ DataLoaders created:")
+print(f"\n DataLoaders created:")
 print(f"  Training: {len(train_dataset)} images")
 print(f"  Validation: {len(val_dataset)} images")
 print(f"  Test: {len(test_dataset)} images")
@@ -415,7 +415,7 @@ print(f"  Test: {len(test_dataset)} images")
 # ============================================
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(f"🖥️ Using device: {device}")
+print(f" Using device: {device}")
 
 def create_model():
     """
@@ -446,7 +446,7 @@ def create_model():
 model = create_model().to(device)
 
 # Print model summary
-print("\n📌 MODEL ARCHITECTURE:")
+print("\n MODEL ARCHITECTURE:")
 print(f"  Total parameters: {sum(p.numel() for p in model.parameters()):,}")
 print(f"  Trainable parameters: {sum(p.numel() for p in model.parameters() if p.requires_grad):,}")
 print(f"  Frozen parameters: {sum(p.numel() for p in model.parameters() if not p.requires_grad):,}")
@@ -490,7 +490,7 @@ history = {
     "val_acc": []
 }
 
-print(f"\n🚀 Starting training for {EPOCHS} epochs...")
+print(f"\n Starting training for {EPOCHS} epochs...")
 print(f"  Threshold: {THRESHOLD}")
 print(f"  Learning rate: {optimizer.param_groups[0]['lr']}\n")
 
@@ -553,7 +553,7 @@ for epoch in range(EPOCHS):
     scheduler.step(val_loss)
     print(f"Learning rate: {optimizer.param_groups[0]['lr']:.6f}\n")
 
-print("✅ Training complete!")
+print(" Training complete!")
 
 # ============================================
 # STEP 10: VISUALIZE TRAINING CURVES
@@ -584,13 +584,13 @@ ax2.grid(True)
 plt.tight_layout()
 plt.savefig("training_curves.png", dpi=300)
 plt.show()
-print("📊 Training curves saved to training_curves.png")
+print(" Training curves saved to training_curves.png")
 
 # ============================================
 # STEP 11: MODEL EVALUATION
 # ============================================
 
-print("\n📊 Evaluating model on test set...")
+print("\n Evaluating model on test set...")
 
 model.eval()
 all_preds, all_labels, all_probs = [], [], []
@@ -618,7 +618,7 @@ metrics_df = pd.DataFrame({
     "Score": [acc, prec, rec, f1, auc]
 })
 
-print("\n📈 FINAL TEST METRICS:")
+print("\n FINAL TEST METRICS:")
 display(metrics_df)
 
 # Confusion Matrix
@@ -677,7 +677,7 @@ class GradCAM:
         # Register hooks
         self._register_hooks()
 
-        print(f"🎯 Grad-CAM initialized with target layer: {target_layer_name}")
+        print(f" Grad-CAM initialized with target layer: {target_layer_name}")
 
     def _find_layer(self, model, layer_name):
         """Find a layer by name"""
@@ -721,7 +721,7 @@ class GradCAM:
         activations = self.activations
 
         if gradients is None or activations is None:
-            print("⚠️ Gradients or activations not captured")
+            print("Gradients or activations not captured")
             return np.zeros((224, 224))
 
         # Pool gradients (Global Average Pooling)
@@ -781,7 +781,7 @@ class GradCAM:
 # Initialize Grad-CAM
 grad_cam = GradCAM(model, target_layer_name='features.18')
 
-print("✅ Grad-CAM initialized successfully")
+print("Grad-CAM initialized successfully")
 
 # ============================================
 # STEP 13: VISUALIZE PREDICTIONS WITH GRAD-CAM
@@ -859,15 +859,15 @@ def visualize_with_gradcam(image_path, model, grad_cam, threshold=0.3, save=Fals
     }
 
 # Test on sample images
-print("\n🎯 Generating Grad-CAM visualizations...\n")
+print("\n Generating Grad-CAM visualizations...\n")
 
 # Original sample
-print("📸 ORIGINAL IMAGE:")
+print(" ORIGINAL IMAGE:")
 orig_sample = list((BASE / "test" / "original").glob("*"))[0]
 result_orig = visualize_with_gradcam(orig_sample, model, grad_cam, save=True)
 
 # Tampered sample
-print("\n🎨 TAMPERED IMAGE:")
+print("\n TAMPERED IMAGE:")
 tamp_sample = list((BASE / "test" / "tampered").glob("*"))[0]
 result_tamp = visualize_with_gradcam(tamp_sample, model, grad_cam, save=True)
 
@@ -928,13 +928,13 @@ def print_forensic_report(report):
     Print a formatted forensic report
     """
     print("\n" + "="*60)
-    print("🔬 FORENSIC IMAGE ANALYSIS REPORT")
+    print(" FORENSIC IMAGE ANALYSIS REPORT")
     print("="*60)
-    print(f"\n📷 Image: {report['image_name']}")
-    print(f"📏 Size: {report['image_size']}")
-    print(f"📂 Format: {report.get('image_format', 'N/A')}")
+    print(f"\n Image: {report['image_name']}")
+    print(f" Size: {report['image_size']}")
+    print(f"Format: {report.get('image_format', 'N/A')}")
 
-    print(f"\n🔐 CRYPTOGRAPHIC VERIFICATION")
+    print(f"\n CRYPTOGRAPHIC VERIFICATION")
     print("-" * 40)
     print(f"  Status: {report['hash_verified']}")
     if 'stored_hash' in report:
@@ -942,50 +942,50 @@ def print_forensic_report(report):
         print(f"  Current Hash: {report['current_hash'][:16]}...")
     print(f"  Chain of Custody: {len(report.get('chain_of_custody', []))} records")
 
-    print(f"\n🤖 AI ANALYSIS")
+    print(f"\n AI ANALYSIS")
     print("-" * 40)
     print(f"  Verdict: {report['ai_verdict']}")
     print(f"  Confidence: {report['ai_confidence']*100:.1f}%")
 
-    print(f"\n📊 EXPLANATION (Grad-CAM)")
+    print(f"\n EXPLANATION (Grad-CAM)")
     print("-" * 40)
     print(f"  Heatmap Generated: {report['heatmap_generated']}")
     print(f"  Heatmap Size: {report.get('heatmap_shape', 'N/A')}")
 
-    print(f"\n⏰ Generated: {report.get('generated_at', 'N/A')}")
+    print(f"\n Generated: {report.get('generated_at', 'N/A')}")
     print("\n" + "="*60)
 
 # Generate report for a sample
-print("\n📋 Generating forensic report...")
+print("\n Generating forensic report...")
 report = generate_forensic_report(tamp_sample, model, grad_cam, verifier)
 print_forensic_report(report)
 
 # Save report as JSON
 with open("forensic_report.json", 'w') as f:
     json.dump(report, f, indent=2, default=str)
-print("\n💾 Report saved to forensic_report.json")
+print("\n Report saved to forensic_report.json")
 
 # ============================================
 # STEP 15: EXPORT CHAIN OF CUSTODY
 # ============================================
 
-print("\n📊 Exporting chain-of-custody audit trail...")
+print("\n Exporting chain-of-custody audit trail...")
 
 # Export full audit trail
 audit_df = verifier.export_audit_report("audit_report.csv")
 
 # Display summary
-print(f"\n📋 Audit Trail Summary:")
+print(f"\n Audit Trail Summary:")
 print(f"  Total records: {len(audit_df)}")
 print(f"  Unique images: {audit_df['image'].nunique()}")
 print(f"  Unique actions: {audit_df['action'].unique().tolist()}")
 print(f"  Time range: {audit_df['timestamp'].min()} to {audit_df['timestamp'].max()}")
 
 # Display first few records
-print("\n📋 Sample records:")
+print("\n Sample records:")
 display(audit_df.head(10))
 
-print("\n✅ Audit trail exported to audit_report.csv")
+print("\n Audit trail exported to audit_report.csv")
 
 # ============================================
 # STEP 16: SAVE MODEL AND CONFIGURATION
@@ -1012,7 +1012,7 @@ torch.save({
     }
 }, MODEL_PATH)
 
-print(f"✅ Model saved to {MODEL_PATH}")
+print(f" Model saved to {MODEL_PATH}")
 
 # Save configuration summary
 config_summary = {
@@ -1045,17 +1045,17 @@ config_summary = {
 with open("model_config.json", 'w') as f:
     json.dump(config_summary, f, indent=2)
 
-print("✅ Configuration saved to model_config.json")
+print("Configuration saved to model_config.json")
 
 # ============================================
 # STEP 17: FINAL SUMMARY
 # ============================================
 
 print("\n" + "="*60)
-print("🎉 INTEGRATED PIPELINE COMPLETE")
+print(" INTEGRATED PIPELINE COMPLETE")
 print("="*60)
 
-print("\n📊 SUMMARY:")
+print("\n SUMMARY:")
 print("-"*40)
 print(f"  Dataset: CASIA 2.0")
 print(f"  Total Images: {len(train_dataset) + len(val_dataset) + len(test_dataset)}")
@@ -1092,4 +1092,4 @@ print(f"    ROC Curve: roc_curve.png")
 print(f"    Grad-CAM Outputs: gradcam_outputs/")
 
 print("\n" + "="*60)
-print("✅ Ready!")
+print("Ready!")
