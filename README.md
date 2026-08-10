@@ -1,17 +1,17 @@
-#Image Tampering Detection with Cryptographic Verification
+Image Tampering Detection with Cryptographic Verification
 
 **Author:** Ivan Bageya  
 **Date:** August 2026  
 **Dataset:** CASIA 2.0  
 
-## 📋 Overview
+## Overview
 This project implements an AI-powered image forensics system that detects tampered images using:
 - **MobileNetV2** deep learning model
 - **SHA-256 cryptographic hashing** for chain-of-custody
 - **Grad-CAM** explainable AI visualizations
 - **Error Level Analysis (ELA)** preprocessing
 
-## 🛠️ Methodology
+## Methodology
 1. **Data Preparation** - Split CASIA 2.0 dataset (70/15/15)
 2. **Cryptographic Hashing** - SHA-256 for each image
 3. **Feature Engineering** - Error Level Analysis (ELA)
@@ -22,10 +22,9 @@ This project implements an AI-powered image forensics system that detects tamper
 ## 📊 Results
 | Metric    | Score  |
 |-----------|--------|
-| Accuracy  | 0.XXXX |
-| Precision | 0.XXXX |
-| Recall    | 0.XXXX |
-| F1 Score  | 0.XXXX |
-| AUC       | 0.XXXX |
+| Accuracy  | 0.9027 |
+| Precision | 0.8349 |
+| Recall    | 0.9479 |
+| F1 Score  | 0.8878 |
+| AUC       | 0.9690 |
 
-## 📁 Repository Structure
