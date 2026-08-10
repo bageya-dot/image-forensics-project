@@ -19,7 +19,7 @@ This project implements an AI-powered image forensics system that detects tamper
 5. **Explainability** - Grad-CAM heatmaps
 6. **Forensic Reporting** - Audit trail generation
 
-## 📊 Results
+## Results
 | Metric    | Score  |
 |-----------|--------|
 | Accuracy  | 0.9027 |
@@ -28,3 +28,20 @@ This project implements an AI-powered image forensics system that detects tamper
 | F1 Score  | 0.8878 |
 | AUC       | 0.9690 |
 
+## Cryptographic:
+    Algorithm: SHA-256
+    Records: 100
+
+## Explainable AI:
+    Method: Grad-CAM
+    Layer: features.18
+
+## Outputs:
+    Model: /content/mobilenet_ela_final.pth
+    Config: model_config.json
+    Audit: audit_report.csv
+    Report: forensic_report.json
+    Training Curves: training_curves.png
+    Confusion Matrix: confusion_matrix.png
+    ROC Curve: roc_curve.png
+    Grad-CAM Outputs: gradcam_outputs/
